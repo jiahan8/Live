@@ -4,15 +4,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.live.home.navigation.HOME_ROUTE
+import com.example.live.navigation.LiveNavHost
+import com.example.live.ui.LiveBottomBar
+import com.example.live.ui.rememberLiveAppState
 import com.example.live.ui.theme.LiveTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,25 +31,27 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    val appState = rememberLiveAppState(
+                        windowSizeClass = calculateWindowSizeClass(this),
+                    )
+
+                    Scaffold(
+                        bottomBar = {
+                            LiveBottomBar(
+                                destinations = appState.topLevelDestinations,
+                                onNavigateToDestination = appState::navigateToTopLevelDestination,
+                                currentDestination = appState.currentDestination,
+                            )
+                        }
+                    ) { innerPadding ->
+                        LiveNavHost(
+                            appState = appState,
+                            modifier = Modifier.padding(innerPadding),
+                            startDestination = HOME_ROUTE
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LiveTheme {
-        Greeting("Android")
     }
 }
