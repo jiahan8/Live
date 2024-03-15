@@ -21,17 +21,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.live.database.model.Post
 import com.example.live.R
+import com.example.live.database.model.Post
 
 @Composable
 internal fun DetailRoute(
     post: Post?,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    detailViewModel: DetailViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
     DetailScreen(post, onBackClick)
 }
@@ -80,12 +77,14 @@ fun Details(post: Post?, onNavigationClick: () -> Unit, modifier: Modifier = Mod
                 painter = rememberAsyncImagePainter(post?.imageUrl),
                 contentDescription = null
             )
-            Text(
-                text = post?.title ?: "",
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp)
-                    .align(Alignment.BottomStart)
-            )
+            post?.title?.let {
+                Text(
+                    text = post.title,
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp)
+                        .align(Alignment.BottomStart)
+                )
+            }
         }
     }
 }

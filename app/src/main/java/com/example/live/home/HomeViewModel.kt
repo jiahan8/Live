@@ -1,4 +1,4 @@
-package com.example.live.search
+package com.example.live.home
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.live.data.repository.LiveRepository
 import com.example.live.database.model.Post
+import com.example.live.search.SearchUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayoutState
 import com.example.live.ui.pullrefresh.RefreshIndicatorState
 import com.example.live.util.DateUtils
@@ -21,7 +22,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val repository: LiveRepository,
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
@@ -29,7 +30,7 @@ class SearchViewModel @Inject constructor(
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val searchUiState: StateFlow<SearchUiState> = _searchUiState
 
-    var photos = mutableListOf<Post>()
+    var posts = mutableListOf<Post>()
         private set
     private var currentPage = 1
     var isLoading by mutableStateOf(false)
@@ -60,15 +61,15 @@ class SearchViewModel @Inject constructor(
             _searchUiState.value = try {
                 delay(2000)
                 val newPhotos = repository.getPhotosFeed(page = currentPage)
-                if (photos.size > 0
+                if (posts.size > 0
                     && (loadingType == SearchUiState.LoadingType.INITIAL_LOAD || loadingType == SearchUiState.LoadingType.PULL_REFRESH)
                 )
-                    photos.clear()
-                photos.addAll(newPhotos)
+                    posts.clear()
+                posts.addAll(newPhotos)
                 if (loadingType == SearchUiState.LoadingType.PULL_REFRESH) {
                     pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
                 }
-                SearchUiState.Success(photos)
+                SearchUiState.Success(posts)
             } catch (e: IOException) {
                 pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
                 SearchUiState.Error
@@ -83,15 +84,5 @@ class SearchViewModel @Inject constructor(
 
     private fun convertElapsedTimeIntoText(timeElapsed: Long): String {
         return DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
-    }
-}
-
-sealed interface SearchUiState {
-    data class Success(val photos: List<Post>) : SearchUiState
-    data object Error : SearchUiState
-    data object Loading : SearchUiState
-
-    enum class LoadingType {
-        INITIAL_LOAD, PULL_REFRESH, LOAD_MORE
     }
 }

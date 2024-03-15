@@ -30,7 +30,8 @@ internal fun SearchRoute(
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     SearchScreen(
-        searchViewModel, onPostClick = onPostClick,
+        searchViewModel,
+        onPostClick,
         { searchViewModel.loadPhotos(SearchUiState.LoadingType.LOAD_MORE) },
         { searchViewModel.loadPhotos(SearchUiState.LoadingType.PULL_REFRESH) },
     )
@@ -44,7 +45,7 @@ fun SearchScreen(
     onPullRefresh: () -> Unit
 ) {
     Photos(
-        searchViewModel.posts,
+        searchViewModel.photos,
         onPostClick,
         onLoadMore,
         onPullRefresh,
@@ -80,14 +81,14 @@ fun Photos(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 state = lazyStaggeredGridState,
                 content = {
-                    items(items = photos) { post ->
+                    items(items = photos) { photo ->
                         AsyncImage(
-                            model = post.imageUrl,
+                            model = photo.imageUrl,
                             contentScale = ContentScale.Crop,
                             contentDescription = null,
                             modifier = Modifier
                                 .clickable {
-                                    onPostClick(post)
+                                    onPostClick(photo)
                                 }
                                 .fillMaxWidth()
                                 .wrapContentHeight(),
@@ -97,7 +98,6 @@ fun Photos(
                     val shouldLoadMore =
                         lazyStaggeredGridState.firstVisibleItemIndex +
                                 lazyStaggeredGridState.layoutInfo.visibleItemsInfo.size >= photos.size
-                    // Check if more data should be loaded and if not already loading
                     if (shouldLoadMore && !searchViewModel.isLoading) {
                         onLoadMore()
                     }

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     kotlin("kapt")
     id("com.android.application")
@@ -22,6 +24,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Get API keys from local.properties
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        // Set API keys in BuildConfig
+        buildConfigField("String", "ACCESS_KEY", "\"${properties.getProperty("API_KEY")}\"")
     }
 
     buildTypes {

@@ -1,6 +1,7 @@
 package com.example.live.network.retrofit
 
 import androidx.tracing.trace
+import com.example.live.BuildConfig
 import com.example.live.network.LiveNetworkDataSource
 import com.example.live.network.model.NetworkPost
 import com.example.live.network.model.NetworkSearchPost
@@ -33,7 +34,6 @@ private interface LiveRetrofitNetworkApi {
 }
 
 private const val LIVE_BASE_URL = "https://api.unsplash.com/"
-private const val ACCESS_KEY = "cctYARK833prFMOCSQYlKY_Rpx5jrU247QCWnxpAmnY"
 
 /**
  * [Retrofit] backed [LiveNetworkDataSource]
@@ -58,8 +58,8 @@ internal class LiveRetrofitNetwork @Inject constructor(
     }
 
     override suspend fun getPhotos(page: Int): List<NetworkPost> =
-        networkApi.getPhotos(ACCESS_KEY, page)
+        networkApi.getPhotos(BuildConfig.ACCESS_KEY, page)
 
     override suspend fun searchPhotos(query: String, page: Int): NetworkSearchPost =
-        networkApi.searchPhotos(ACCESS_KEY, query, page)
+        networkApi.searchPhotos(BuildConfig.ACCESS_KEY, query, page)
 }
