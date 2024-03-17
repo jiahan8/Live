@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.live.database.model.Post
-import com.example.live.search.SearchUiState
+import com.example.live.search.DataLoadingUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayout
 
 @Composable
@@ -34,42 +34,40 @@ internal fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     HomeScreen(
-        homeViewModel,
+        homeViewModel.homeUiState,
         onPostClick,
-        { homeViewModel.loadPhotos(SearchUiState.LoadingType.LOAD_MORE) },
-        { homeViewModel.loadPhotos(SearchUiState.LoadingType.PULL_REFRESH) },
+        { homeViewModel.loadPhotos(DataLoadingUiState.LoadingType.LOAD_MORE) },
+        { homeViewModel.loadPhotos(DataLoadingUiState.LoadingType.PULL_REFRESH) },
     )
 }
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel,
+    homeUiState: HomeUiState,
     onPostClick: (Post) -> Unit,
     onLoadMore: () -> Unit,
     onPullRefresh: () -> Unit
 ) {
     Posts(
-        homeViewModel.posts,
+        homeUiState,
         onPostClick,
         onLoadMore,
         onPullRefresh,
-        homeViewModel
     )
 }
 
 @Composable
 fun Posts(
-    posts: List<Post>,
+    homeUiState: HomeUiState,
     onPostClick: (Post) -> Unit,
     onLoadMore: () -> Unit,
     onPullRefresh: () -> Unit,
-    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    val photos = rememberSaveable { posts }
+    val posts = rememberSaveable { homeUiState.posts }
     val lazyListState = rememberLazyListState()
     val pullToRefreshState = remember {
-        homeViewModel.pullToRefreshState
+        homeUiState.pullToRefreshState
     }
 
     PullToRefreshLayout(
@@ -122,12 +120,12 @@ fun Posts(
                         HorizontalDivider(thickness = 1.dp)
                     }
 
-                    if (homeViewModel.isLoading && homeViewModel.loadingType != SearchUiState.LoadingType.PULL_REFRESH) {
+                    if (homeUiState.isLoading && homeUiState.loadingType != DataLoadingUiState.LoadingType.PULL_REFRESH) {
                         item {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 20.dp),
+                                    .padding(vertical = 30.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator()
@@ -137,8 +135,8 @@ fun Posts(
 
                     val shouldLoadMore =
                         lazyListState.firstVisibleItemIndex +
-                                lazyListState.layoutInfo.visibleItemsInfo.size >= photos.size
-                    if (shouldLoadMore && !homeViewModel.isLoading) {
+                                lazyListState.layoutInfo.visibleItemsInfo.size >= posts.size
+                    if (shouldLoadMore && !homeUiState.isLoading) {
                         onLoadMore()
                     }
                 }

@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.live.data.repository.LiveRepository
 import com.example.live.database.model.Post
-import com.example.live.search.SearchUiState
+import com.example.live.search.DataLoadingUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayoutState
 import com.example.live.ui.pullrefresh.RefreshIndicatorState
 import com.example.live.util.DateUtils
 import com.example.live.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -27,57 +25,54 @@ class HomeViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
-    private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
-    val searchUiState: StateFlow<SearchUiState> = _searchUiState
-
-    var posts = mutableListOf<Post>()
-        private set
-    private var currentPage = 1
-    var isLoading by mutableStateOf(false)
-        private set
-    var loadingType: SearchUiState.LoadingType by mutableStateOf(SearchUiState.LoadingType.INITIAL_LOAD)
-        private set
-
-    val pullToRefreshState = PullToRefreshLayoutState(
-        onTimeUpdated = { timeElapsed ->
-            convertElapsedTimeIntoText(timeElapsed)
-        }
+    var homeUiState by mutableStateOf(
+        HomeUiState(
+            pullToRefreshState = PullToRefreshLayoutState(
+                onTimeUpdated = { timeElapsed ->
+                    convertElapsedTimeIntoText(timeElapsed)
+                })
+        )
     )
+        private set
+
+    private var currentPage = 1
 
     init {
-        loadPhotos(SearchUiState.LoadingType.INITIAL_LOAD)
+        loadPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD)
     }
 
-    fun loadPhotos(loadingType: SearchUiState.LoadingType) {
-        this.loadingType = loadingType
+    fun loadPhotos(loadingType: DataLoadingUiState.LoadingType) {
+        homeUiState = homeUiState.copy(loadingType = loadingType)
         currentPage =
-            if (loadingType == SearchUiState.LoadingType.INITIAL_LOAD || loadingType == SearchUiState.LoadingType.PULL_REFRESH)
+            if (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 1
             else
                 currentPage.inc()
         viewModelScope.launch {
-            isLoading = true
-            _searchUiState.value = SearchUiState.Loading
-            _searchUiState.value = try {
+            homeUiState = homeUiState.copy(
+                isLoading = true,
+                dataLoadingUiState = DataLoadingUiState.Loading
+            )
+            try {
                 delay(2000)
                 val newPhotos = repository.getPhotosFeed(page = currentPage)
-                if (posts.size > 0
-                    && (loadingType == SearchUiState.LoadingType.INITIAL_LOAD || loadingType == SearchUiState.LoadingType.PULL_REFRESH)
+                if (homeUiState.posts.isNotEmpty()
+                    && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )
-                    posts.clear()
-                posts.addAll(newPhotos)
-                if (loadingType == SearchUiState.LoadingType.PULL_REFRESH) {
-                    pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                    homeUiState.posts.clear()
+                homeUiState.posts.addAll(newPhotos)
+                if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {
+                    homeUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
                 }
-                SearchUiState.Success(posts)
+                homeUiState = homeUiState.copy(dataLoadingUiState = DataLoadingUiState.Success)
             } catch (e: IOException) {
-                pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
-                SearchUiState.Error
+                homeUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                homeUiState = homeUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
             } catch (e: HttpException) {
-                pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
-                SearchUiState.Error
+                homeUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                homeUiState = homeUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
             } finally {
-                isLoading = false
+                homeUiState = homeUiState.copy(isLoading = false)
             }
         }
     }
@@ -86,3 +81,11 @@ class HomeViewModel @Inject constructor(
         return DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
     }
 }
+
+data class HomeUiState(
+    val dataLoadingUiState: DataLoadingUiState = DataLoadingUiState.Loading,
+    val posts: MutableList<Post> = mutableListOf(),
+    val isLoading: Boolean = false,
+    val loadingType: DataLoadingUiState.LoadingType = DataLoadingUiState.LoadingType.INITIAL_LOAD,
+    val pullToRefreshState: PullToRefreshLayoutState
+)

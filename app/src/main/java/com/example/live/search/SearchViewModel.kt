@@ -13,8 +13,6 @@ import com.example.live.util.DateUtils
 import com.example.live.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -26,57 +24,54 @@ class SearchViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
-    private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
-    val searchUiState: StateFlow<SearchUiState> = _searchUiState
-
-    var photos = mutableListOf<Post>()
-        private set
-    private var currentPage = 1
-    var isLoading by mutableStateOf(false)
-        private set
-    var loadingType: SearchUiState.LoadingType by mutableStateOf(SearchUiState.LoadingType.INITIAL_LOAD)
-        private set
-
-    val pullToRefreshState = PullToRefreshLayoutState(
-        onTimeUpdated = { timeElapsed ->
-            convertElapsedTimeIntoText(timeElapsed)
-        }
+    var searchUiState by mutableStateOf(
+        SearchUiState(
+            pullToRefreshState = PullToRefreshLayoutState(
+                onTimeUpdated = { timeElapsed ->
+                    convertElapsedTimeIntoText(timeElapsed)
+                })
+        )
     )
+        private set
+
+    private var currentPage = 1
 
     init {
-        loadPhotos(SearchUiState.LoadingType.INITIAL_LOAD)
+        loadPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD)
     }
 
-    fun loadPhotos(loadingType: SearchUiState.LoadingType) {
-        this.loadingType = loadingType
+    fun loadPhotos(loadingType: DataLoadingUiState.LoadingType) {
+        searchUiState = searchUiState.copy(loadingType = loadingType)
         currentPage =
-            if (loadingType == SearchUiState.LoadingType.INITIAL_LOAD || loadingType == SearchUiState.LoadingType.PULL_REFRESH)
+            if (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 1
             else
                 currentPage.inc()
         viewModelScope.launch {
-            isLoading = true
-            _searchUiState.value = SearchUiState.Loading
-            _searchUiState.value = try {
+            searchUiState = searchUiState.copy(
+                isLoading = true,
+                dataLoadingUiState = DataLoadingUiState.Loading
+            )
+            try {
                 delay(2000)
                 val newPhotos = repository.getPhotosFeed(page = currentPage)
-                if (photos.size > 0
-                    && (loadingType == SearchUiState.LoadingType.INITIAL_LOAD || loadingType == SearchUiState.LoadingType.PULL_REFRESH)
+                if (searchUiState.photos.isNotEmpty()
+                    && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )
-                    photos.clear()
-                photos.addAll(newPhotos)
-                if (loadingType == SearchUiState.LoadingType.PULL_REFRESH) {
-                    pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                    searchUiState.photos.clear()
+                searchUiState.photos.addAll(newPhotos)
+                if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {
+                    searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
                 }
-                SearchUiState.Success(photos)
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Success)
             } catch (e: IOException) {
-                pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
-                SearchUiState.Error
+                searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
             } catch (e: HttpException) {
-                pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
-                SearchUiState.Error
+                searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
             } finally {
-                isLoading = false
+                searchUiState = searchUiState.copy(isLoading = false)
             }
         }
     }
@@ -86,10 +81,18 @@ class SearchViewModel @Inject constructor(
     }
 }
 
-sealed interface SearchUiState {
-    data class Success(val photos: List<Post>) : SearchUiState
-    data object Error : SearchUiState
-    data object Loading : SearchUiState
+data class SearchUiState(
+    val dataLoadingUiState: DataLoadingUiState = DataLoadingUiState.Loading,
+    val photos: MutableList<Post> = mutableListOf(),
+    val isLoading: Boolean = false,
+    val loadingType: DataLoadingUiState.LoadingType = DataLoadingUiState.LoadingType.INITIAL_LOAD,
+    val pullToRefreshState: PullToRefreshLayoutState
+)
+
+sealed interface DataLoadingUiState {
+    data object Success : DataLoadingUiState
+    data object Error : DataLoadingUiState
+    data object Loading : DataLoadingUiState
 
     enum class LoadingType {
         INITIAL_LOAD, PULL_REFRESH, LOAD_MORE

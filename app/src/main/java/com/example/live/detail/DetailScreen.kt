@@ -21,6 +21,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.live.R
 import com.example.live.database.model.Post
@@ -53,7 +54,8 @@ fun Details(post: Post?, onNavigationClick: () -> Unit, modifier: Modifier = Mod
                     Text(
                         text = stringResource(id = R.string.explore),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 16.sp
                     )
                 },
                 navigationIcon = {
@@ -82,7 +84,8 @@ fun Details(post: Post?, onNavigationClick: () -> Unit, modifier: Modifier = Mod
                     text = post.title,
                     modifier = Modifier
                         .padding(start = 20.dp, end = 20.dp)
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.BottomStart),
+                    fontSize = 14.sp
                 )
             }
         }

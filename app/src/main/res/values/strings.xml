@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Live</string>
     <string name="explore">Explore</string>
+    <string name="search">Search</string>
 
     // Pull to refresh
     <string name="last_updated">Last update %s</string>

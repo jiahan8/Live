@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.live.R
@@ -58,20 +57,16 @@ fun PullToRefreshIndicator(
             Text(
                 text = stringResource(indicatorState.messageRes),
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.Black,
             )
             if (indicatorState == RefreshIndicatorState.Refreshing) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
-                    color = Color.Black,
-                    trackColor = Color.Gray,
                     strokeWidth = 2.dp,
                 )
             } else {
                 Text(
                     text = stringResource(R.string.last_updated, timeElapsed),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.Black,
                 )
             }
         }
