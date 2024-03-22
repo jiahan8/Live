@@ -12,6 +12,7 @@ import com.example.live.ui.pullrefresh.RefreshIndicatorState
 import com.example.live.util.DateUtils
 import com.example.live.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -35,6 +36,8 @@ class SearchViewModel @Inject constructor(
         private set
 
     private var currentPage = 1
+    private var searchPhotosJob: Job? = null
+    private var loadPhotosJob: Job? = null
 
     init {
         loadPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD)
@@ -47,7 +50,9 @@ class SearchViewModel @Inject constructor(
                 1
             else
                 currentPage.inc()
-        viewModelScope.launch {
+        loadPhotosJob?.cancel()
+        searchPhotosJob?.cancel()
+        loadPhotosJob = viewModelScope.launch {
             searchUiState = searchUiState.copy(
                 isLoading = true,
                 dataLoadingUiState = DataLoadingUiState.Loading
@@ -55,6 +60,44 @@ class SearchViewModel @Inject constructor(
             try {
                 delay(2000)
                 val newPhotos = repository.getPhotosFeed(page = currentPage)
+                if (searchUiState.photos.isNotEmpty()
+                    && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
+                )
+                    searchUiState.photos.clear()
+                searchUiState.photos.addAll(newPhotos)
+                if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {
+                    searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                }
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Success)
+            } catch (e: IOException) {
+                searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
+            } catch (e: HttpException) {
+                searchUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
+                searchUiState = searchUiState.copy(dataLoadingUiState = DataLoadingUiState.Error)
+            } finally {
+                searchUiState = searchUiState.copy(isLoading = false)
+            }
+        }
+    }
+
+    fun searchPhotos(loadingType: DataLoadingUiState.LoadingType, query: String) {
+        searchUiState = searchUiState.copy(loadingType = loadingType)
+        currentPage =
+            if (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
+                1
+            else
+                currentPage.inc()
+        loadPhotosJob?.cancel()
+        searchPhotosJob?.cancel()
+        searchPhotosJob = viewModelScope.launch {
+            searchUiState = searchUiState.copy(
+                isLoading = true,
+                dataLoadingUiState = DataLoadingUiState.Loading
+            )
+            try {
+                delay(2000)
+                val newPhotos = repository.searchPhotosFeed(query = query, page = currentPage)
                 if (searchUiState.photos.isNotEmpty()
                     && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )

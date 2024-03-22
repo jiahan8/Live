@@ -22,8 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,8 +48,8 @@ internal fun SearchRoute(
     SearchScreen(
         searchViewModel.searchUiState,
         onPostClick,
-        { searchViewModel.loadPhotos(DataLoadingUiState.LoadingType.LOAD_MORE) },
-        { searchViewModel.loadPhotos(DataLoadingUiState.LoadingType.PULL_REFRESH) },
+        searchViewModel::loadPhotos,
+        searchViewModel::searchPhotos,
     )
 }
 
@@ -53,14 +57,14 @@ internal fun SearchRoute(
 fun SearchScreen(
     searchUiState: SearchUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: () -> Unit,
-    onPullRefresh: () -> Unit
+    onLoadMore: (DataLoadingUiState.LoadingType) -> Unit,
+    onSearchLoadMore: (DataLoadingUiState.LoadingType, String) -> Unit
 ) {
     Photos(
         searchUiState,
         onPostClick,
         onLoadMore,
-        onPullRefresh,
+        onSearchLoadMore,
     )
 }
 
@@ -68,20 +72,44 @@ fun SearchScreen(
 fun Photos(
     searchUiState: SearchUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: () -> Unit,
-    onPullRefresh: () -> Unit
+    onLoadMore: (DataLoadingUiState.LoadingType) -> Unit,
+    onSearchLoadMore: (DataLoadingUiState.LoadingType, String) -> Unit
 ) {
     val photos = rememberSaveable { searchUiState.photos }
     val lazyStaggeredGridState = rememberLazyStaggeredGridState()
     val pullToRefreshState = remember {
         searchUiState.pullToRefreshState
     }
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            lazyStaggeredGridState.firstVisibleItemIndex +
+                    lazyStaggeredGridState.layoutInfo.visibleItemsInfo.size >= photos.size
+        }
+    }
+    var searchText by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    if (shouldLoadMore && !searchUiState.isLoading) {
+        if (searchText.isNotBlank()) {
+            onSearchLoadMore(DataLoadingUiState.LoadingType.LOAD_MORE, searchText)
+        } else {
+            onLoadMore(DataLoadingUiState.LoadingType.LOAD_MORE)
+        }
+    }
 
     Scaffold(
         topBar = {
             TextField(
-                value = "",
-                onValueChange = {},
+                value = searchText,
+                onValueChange = { text ->
+                    searchText = text
+                    if (searchText.isNotBlank()) {
+                        onSearchLoadMore(DataLoadingUiState.LoadingType.INITIAL_LOAD, searchText)
+                    } else {
+                        onLoadMore(DataLoadingUiState.LoadingType.INITIAL_LOAD)
+                    }
+                },
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .fillMaxWidth(),
@@ -109,7 +137,11 @@ fun Photos(
                 .padding(innerPadding),
             pullRefreshLayoutState = pullToRefreshState,
             onRefresh = {
-                onPullRefresh()
+                if (searchText.isNotBlank()) {
+                    onSearchLoadMore(DataLoadingUiState.LoadingType.PULL_REFRESH, searchText)
+                } else {
+                    onLoadMore(DataLoadingUiState.LoadingType.PULL_REFRESH)
+                }
             },
         ) {
             Box {
@@ -131,13 +163,6 @@ fun Photos(
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
                             )
-                        }
-
-                        val shouldLoadMore =
-                            lazyStaggeredGridState.firstVisibleItemIndex +
-                                    lazyStaggeredGridState.layoutInfo.visibleItemsInfo.size >= photos.size
-                        if (shouldLoadMore && !searchUiState.isLoading) {
-                            onLoadMore()
                         }
                     },
                     modifier = Modifier.fillMaxSize(),

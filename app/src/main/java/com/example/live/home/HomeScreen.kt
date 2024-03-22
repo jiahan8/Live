@@ -15,6 +15,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -36,8 +38,8 @@ internal fun HomeRoute(
     HomeScreen(
         homeViewModel.homeUiState,
         onPostClick,
-        { homeViewModel.loadPhotos(DataLoadingUiState.LoadingType.LOAD_MORE) },
-        { homeViewModel.loadPhotos(DataLoadingUiState.LoadingType.PULL_REFRESH) },
+        { homeViewModel.loadPosts(DataLoadingUiState.LoadingType.LOAD_MORE) },
+        { homeViewModel.loadPosts(DataLoadingUiState.LoadingType.PULL_REFRESH) },
     )
 }
 
@@ -68,6 +70,16 @@ fun Posts(
     val lazyListState = rememberLazyListState()
     val pullToRefreshState = remember {
         homeUiState.pullToRefreshState
+    }
+
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex +
+                    lazyListState.layoutInfo.visibleItemsInfo.size >= posts.size
+        }
+    }
+    if (shouldLoadMore && !homeUiState.isLoading) {
+        onLoadMore()
     }
 
     PullToRefreshLayout(
@@ -131,13 +143,6 @@ fun Posts(
                                 CircularProgressIndicator()
                             }
                         }
-                    }
-
-                    val shouldLoadMore =
-                        lazyListState.firstVisibleItemIndex +
-                                lazyListState.layoutInfo.visibleItemsInfo.size >= posts.size
-                    if (shouldLoadMore && !homeUiState.isLoading) {
-                        onLoadMore()
                     }
                 }
             )

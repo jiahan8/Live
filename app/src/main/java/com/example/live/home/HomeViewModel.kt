@@ -38,10 +38,10 @@ class HomeViewModel @Inject constructor(
     private var currentPage = 1
 
     init {
-        loadPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD)
+        loadPosts(DataLoadingUiState.LoadingType.INITIAL_LOAD)
     }
 
-    fun loadPhotos(loadingType: DataLoadingUiState.LoadingType) {
+    fun loadPosts(loadingType: DataLoadingUiState.LoadingType) {
         homeUiState = homeUiState.copy(loadingType = loadingType)
         currentPage =
             if (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
@@ -55,12 +55,12 @@ class HomeViewModel @Inject constructor(
             )
             try {
                 delay(2000)
-                val newPhotos = repository.getPhotosFeed(page = currentPage)
+                val newPosts = repository.getPhotosFeed(page = currentPage)
                 if (homeUiState.posts.isNotEmpty()
                     && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )
                     homeUiState.posts.clear()
-                homeUiState.posts.addAll(newPhotos)
+                homeUiState.posts.addAll(newPosts)
                 if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {
                     homeUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
                 }
