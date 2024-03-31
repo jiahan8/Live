@@ -2,6 +2,9 @@
     <string name="app_name">Live</string>
     <string name="explore">Explore</string>
     <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="clear_cache">Clear Cache</string>
 
     // Pull to refresh
     <string name="last_updated">Last update %s</string>

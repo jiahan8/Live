@@ -8,9 +8,11 @@
 * Jetpack Compose
 * Flow
 * Coroutines
-* Navigation
+* Firebase, Remote Config, A/B Testing, Analytics, Push Notifications
 * Room
 * DataStore
-* Material Design 3
+* Navigation, Deep linking
+* Material Design 3, Themes switching
 * Unit Test
 * Hilt
+* GitHub Actions

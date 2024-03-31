@@ -97,7 +97,7 @@ class SearchViewModel @Inject constructor(
             )
             try {
                 delay(2000)
-                val newPhotos = repository.searchPhotosFeed(query = query, page = currentPage)
+                val newPhotos = repository.searchPhotos(query = query, page = currentPage)
                 if (searchUiState.photos.isNotEmpty()
                     && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )

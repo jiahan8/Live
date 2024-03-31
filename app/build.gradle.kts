@@ -81,10 +81,10 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.compose.material:material:1.6.2")
+    implementation("androidx.compose.material:material:1.6.4")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.tracing:tracing-ktx:1.2.0")
-    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
@@ -94,6 +94,7 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
 
 // Allow references to generated code

@@ -57,14 +57,14 @@ internal fun SearchRoute(
 fun SearchScreen(
     searchUiState: SearchUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: (DataLoadingUiState.LoadingType) -> Unit,
-    onSearchLoadMore: (DataLoadingUiState.LoadingType, String) -> Unit
+    onLoadPhotos: (DataLoadingUiState.LoadingType) -> Unit,
+    onSearchPhotos: (DataLoadingUiState.LoadingType, String) -> Unit
 ) {
     Photos(
         searchUiState,
         onPostClick,
-        onLoadMore,
-        onSearchLoadMore,
+        onLoadPhotos,
+        onSearchPhotos,
     )
 }
 
@@ -72,8 +72,8 @@ fun SearchScreen(
 fun Photos(
     searchUiState: SearchUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: (DataLoadingUiState.LoadingType) -> Unit,
-    onSearchLoadMore: (DataLoadingUiState.LoadingType, String) -> Unit
+    onLoadPhotos: (DataLoadingUiState.LoadingType) -> Unit,
+    onSearchPhotos: (DataLoadingUiState.LoadingType, String) -> Unit
 ) {
     val photos = rememberSaveable { searchUiState.photos }
     val lazyStaggeredGridState = rememberLazyStaggeredGridState()
@@ -86,15 +86,13 @@ fun Photos(
                     lazyStaggeredGridState.layoutInfo.visibleItemsInfo.size >= photos.size
         }
     }
-    var searchText by rememberSaveable {
-        mutableStateOf("")
-    }
+    var searchText by rememberSaveable { mutableStateOf("") }
 
     if (shouldLoadMore && !searchUiState.isLoading) {
         if (searchText.isNotBlank()) {
-            onSearchLoadMore(DataLoadingUiState.LoadingType.LOAD_MORE, searchText)
+            onSearchPhotos(DataLoadingUiState.LoadingType.LOAD_MORE, searchText)
         } else {
-            onLoadMore(DataLoadingUiState.LoadingType.LOAD_MORE)
+            onLoadPhotos(DataLoadingUiState.LoadingType.LOAD_MORE)
         }
     }
 
@@ -105,9 +103,9 @@ fun Photos(
                 onValueChange = { text ->
                     searchText = text
                     if (searchText.isNotBlank()) {
-                        onSearchLoadMore(DataLoadingUiState.LoadingType.INITIAL_LOAD, searchText)
+                        onSearchPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD, searchText)
                     } else {
-                        onLoadMore(DataLoadingUiState.LoadingType.INITIAL_LOAD)
+                        onLoadPhotos(DataLoadingUiState.LoadingType.INITIAL_LOAD)
                     }
                 },
                 modifier = Modifier
@@ -138,9 +136,9 @@ fun Photos(
             pullRefreshLayoutState = pullToRefreshState,
             onRefresh = {
                 if (searchText.isNotBlank()) {
-                    onSearchLoadMore(DataLoadingUiState.LoadingType.PULL_REFRESH, searchText)
+                    onSearchPhotos(DataLoadingUiState.LoadingType.PULL_REFRESH, searchText)
                 } else {
-                    onLoadMore(DataLoadingUiState.LoadingType.PULL_REFRESH)
+                    onLoadPhotos(DataLoadingUiState.LoadingType.PULL_REFRESH)
                 }
             },
         ) {

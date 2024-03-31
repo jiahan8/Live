@@ -3,6 +3,7 @@ package com.example.live
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -10,22 +11,36 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import com.example.live.data.repository.LiveRepository
+import com.example.live.datastore.UserPreferences
 import com.example.live.home.navigation.HOME_ROUTE
 import com.example.live.navigation.LiveNavHost
 import com.example.live.ui.LiveBottomBar
 import com.example.live.ui.rememberLiveAppState
 import com.example.live.ui.theme.LiveTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var repository: LiveRepository
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            LiveTheme {
+            LiveTheme(
+                darkTheme = mainViewModel.userPreferencesFlow.collectAsState(
+                    initial = UserPreferences(false)
+                ).value.isDarkTheme
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
