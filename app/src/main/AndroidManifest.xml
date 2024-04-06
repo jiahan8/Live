@@ -25,6 +25,29 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "live://jiahan8.github.io/search” -->
+                <data
+                    android:host="@string/host"
+                    android:pathPrefix="@string/search_path_prefix"
+                    android:scheme="@string/scheme" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/host"
+                    android:pathPrefix="@string/detail_path_prefix"
+                    android:scheme="@string/scheme" />
+            </intent-filter>
         </activity>
     </application>
 

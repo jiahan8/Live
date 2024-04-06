@@ -4,6 +4,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.example.live.navigation.LiveNavigationBar
@@ -37,7 +38,7 @@ fun LiveBottomBar(
                         contentDescription = null,
                     )
                 },
-                label = { Text(destination.titleTextId) },
+                label = { Text(stringResource(id = destination.titleTextId)) },
             )
         }
     }

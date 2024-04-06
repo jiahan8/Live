@@ -8,6 +8,7 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.live.R
 
 /**
  * Type for the top level destinations in the application. Each of these destinations
@@ -15,11 +16,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * next within a single destination will be handled directly in composables.
  */
 enum class TopLevelDestination(
-    val titleTextId: String,
+    val titleTextId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
 ) {
-    HOME("Home", Icons.Rounded.Home, Icons.Outlined.Home),
-    SEARCH("Search", Icons.Rounded.Search, Icons.Outlined.Search),
-    PROFILE("Profile", Icons.Rounded.Person, Icons.Outlined.Person),
+    HOME(R.string.home, Icons.Rounded.Home, Icons.Outlined.Home),
+    SEARCH(R.string.search, Icons.Rounded.Search, Icons.Outlined.Search),
+    PROFILE(R.string.profile, Icons.Rounded.Person, Icons.Outlined.Person),
 }
