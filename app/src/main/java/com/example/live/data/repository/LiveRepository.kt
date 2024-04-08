@@ -5,10 +5,13 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.live.database.PostDAO
+import com.example.live.database.asDomainModel
 import com.example.live.database.model.Post
 import com.example.live.datastore.UserPreferences
 import com.example.live.network.LiveNetworkDataSource
 import com.example.live.network.model.NetworkPost
+import com.example.live.network.model.asDatabaseModel
 import com.example.live.network.model.asEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +21,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 interface LiveRepository {
+    suspend fun getPostsFeed(): Flow<List<Post>>
+    suspend fun getPosts(page: Int)
     suspend fun getPhotosFeed(page: Int): List<Post>
     suspend fun searchPhotos(query: String, page: Int): List<Post>
     val userPreferencesFlow: Flow<UserPreferences>
@@ -32,8 +37,21 @@ private val Context.dataStore by preferencesDataStore(
 
 class PhotoRepository @Inject constructor(
     private val dataSource: LiveNetworkDataSource,
+    private val postDAO: PostDAO,
     @ApplicationContext private val context: Context,
 ) : LiveRepository {
+
+    override suspend fun getPostsFeed(): Flow<List<Post>> =
+        postDAO.getPosts().map { it.asDomainModel() }
+
+    override suspend fun getPosts(page: Int) {
+        val postList = dataSource.getPhotos(page)
+        if (page == 1) {
+            postDAO.deletePosts()
+            postDAO.deleteSequence()
+        }
+        postDAO.insertPosts(*postList.asDatabaseModel())
+    }
 
     override suspend fun getPhotosFeed(page: Int): List<Post> =
         dataSource.getPhotos(page).map(NetworkPost::asEntity)

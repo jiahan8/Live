@@ -14,6 +14,7 @@ import com.example.live.util.DateUtils
 import com.example.live.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -55,11 +56,9 @@ class HomeViewModel @Inject constructor(
             )
             try {
                 delay(2000)
-                val newPosts = repository.getPhotosFeed(page = currentPage)
-                if (homeUiState.posts.isNotEmpty()
-                    && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
-                )
-                    homeUiState.posts.clear()
+                repository.getPosts(page = currentPage)
+                val newPosts = repository.getPostsFeed().first()
+                homeUiState.posts.clear()
                 homeUiState.posts.addAll(newPosts)
                 if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {
                     homeUiState.pullToRefreshState.updateRefreshState(RefreshIndicatorState.Default)
