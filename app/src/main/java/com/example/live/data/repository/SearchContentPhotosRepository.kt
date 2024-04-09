@@ -1,6 +1,6 @@
 package com.example.live.data.repository
 
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.network.LiveNetworkDataSource
 import com.example.live.network.model.NetworkPost
 import com.example.live.network.model.asEntity

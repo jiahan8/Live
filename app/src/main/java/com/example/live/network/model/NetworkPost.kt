@@ -1,7 +1,7 @@
 package com.example.live.network.model
 
-import com.example.live.database.DatabasePost
-import com.example.live.database.model.Post
+import com.example.live.database.model.DatabasePost
+import com.example.live.data.model.Post
 import kotlinx.serialization.Serializable
 
 /**
@@ -35,8 +35,8 @@ fun NetworkPost.asEntity() = Post(
 fun List<NetworkPost>.asDatabaseModel(): Array<DatabasePost> = this.map {
     DatabasePost(
         0,
-        post_id = it.id,
+        postId = it.id,
         title = it.description,
-        image_url = it.urls.regular
+        imageUrl = it.urls.regular
     )
 }.toTypedArray()

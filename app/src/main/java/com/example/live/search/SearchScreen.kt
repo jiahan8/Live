@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.live.R
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.ui.pullrefresh.PullToRefreshLayout
 
 @Composable

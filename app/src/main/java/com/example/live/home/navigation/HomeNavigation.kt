@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.home.HomeRoute
 
 const val HOME_ROUTE = "home_route"

@@ -26,7 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.search.DataLoadingUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayout
 

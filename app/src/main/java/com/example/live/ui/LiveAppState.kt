@@ -13,7 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import androidx.tracing.trace
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.detail.navigation.DETAIL_ROUTE
 import com.example.live.home.navigation.HOME_ROUTE
 import com.example.live.profile.navigation.PROFILE_ROUTE

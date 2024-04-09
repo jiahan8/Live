@@ -1,4 +1,4 @@
-package com.example.live.database.model
+package com.example.live.data.model
 
 import android.net.Uri
 import android.os.Bundle

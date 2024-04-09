@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.search.SearchRoute
 
 const val SEARCH_ROUTE = "search_route"

@@ -2,7 +2,7 @@ package com.example.live.database.di
 
 import android.content.Context
 import com.example.live.database.AppDatabase
-import com.example.live.database.PostDAO
+import com.example.live.database.dao.PostDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +21,7 @@ class DatabaseModule {
     }
 
     @Provides
-    fun providePostDAO(appDatabase: AppDatabase): PostDAO {
-        return appDatabase.postDAO()
+    fun providePostDAO(appDatabase: AppDatabase): PostDao {
+        return appDatabase.postDao()
     }
 }

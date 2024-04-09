@@ -6,8 +6,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.live.database.model.Post
-import com.example.live.database.model.PostArgType
+import com.example.live.data.model.Post
+import com.example.live.data.model.PostArgType
 import com.example.live.detail.DetailRoute
 import com.google.gson.Gson
 

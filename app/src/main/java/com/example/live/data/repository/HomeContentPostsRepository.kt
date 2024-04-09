@@ -1,8 +1,8 @@
 package com.example.live.data.repository
 
-import com.example.live.database.PostDAO
-import com.example.live.database.asDomainModel
-import com.example.live.database.model.Post
+import com.example.live.database.dao.PostDao
+import com.example.live.database.model.asDomainModel
+import com.example.live.data.model.Post
 import com.example.live.network.LiveNetworkDataSource
 import com.example.live.network.model.asDatabaseModel
 import kotlinx.coroutines.flow.Flow
@@ -11,18 +11,18 @@ import javax.inject.Inject
 
 class HomeContentPostsRepository @Inject constructor(
     private val dataSource: LiveNetworkDataSource,
-    private val postDAO: PostDAO
+    private val postDao: PostDao
 ) : PostsRepository {
 
     override val posts: Flow<List<Post>> =
-        postDAO.getPosts().map { it.asDomainModel() }
+        postDao.getPosts().map { it.asDomainModel() }
 
     override suspend fun savePosts(page: Int) {
         val postList = dataSource.getPhotos(page)
         if (page == 1) {
-            postDAO.deletePosts()
-            postDAO.deleteSequence()
+            postDao.deletePosts()
+            postDao.deleteSequence()
         }
-        postDAO.insertPosts(*postList.asDatabaseModel())
+        postDao.insertPosts(*postList.asDatabaseModel())
     }
 }

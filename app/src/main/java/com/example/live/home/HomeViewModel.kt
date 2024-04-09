@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.live.data.repository.HomeContentPostsRepository
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 import com.example.live.search.DataLoadingUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayoutState
 import com.example.live.ui.pullrefresh.RefreshIndicatorState

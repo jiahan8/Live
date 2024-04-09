@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.live.database.dao.PostDao
+import com.example.live.database.model.DatabasePost
 
-private const val DATABASE_NAME = "post_database"
+private const val DATABASE_NAME = "post-database"
 
 /**
  * The Room database for this app
@@ -13,7 +15,7 @@ private const val DATABASE_NAME = "post_database"
 @Database(entities = [DatabasePost::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun postDAO(): PostDAO
+    abstract fun postDao(): PostDao
 
     companion object {
 

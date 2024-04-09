@@ -1,6 +1,6 @@
 package com.example.live.data.repository
 
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 
 interface PhotosRepository {
     suspend fun getPhotos(page: Int): List<Post>

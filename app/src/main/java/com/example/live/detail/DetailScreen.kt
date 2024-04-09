@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.live.R
-import com.example.live.database.model.Post
+import com.example.live.data.model.Post
 
 @Composable
 internal fun DetailRoute(
