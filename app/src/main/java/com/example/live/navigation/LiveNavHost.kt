@@ -1,18 +1,16 @@
 package com.example.live.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.example.live.ui.LiveAppState
 import com.example.live.detail.navigation.detailScreen
 import com.example.live.home.navigation.HOME_ROUTE
 import com.example.live.home.navigation.homeScreen
 import com.example.live.profile.navigation.profileScreen
 import com.example.live.search.navigation.searchScreen
+import com.example.live.ui.LiveAppState
 
 /**
  * Top-level navigation graph. Navigation is organized as explained at
@@ -32,13 +30,7 @@ fun LiveNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier,
-        enterTransition = {
-            EnterTransition.None
-        },
-        exitTransition = {
-            ExitTransition.None
-        }
+        modifier = modifier
     ) {
         homeScreen(onPostClick = appState::navigateToDetail)
         searchScreen(onPostClick = stableOnPostClick)

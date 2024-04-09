@@ -11,8 +11,8 @@
 * Firebase, Remote Config, A/B Testing, Analytics, Push Notifications
 * Room
 * DataStore
-* Navigation, Deep linking
-* Material Design 3, Themes switching
+* Navigation, Deep Linking
+* Material Design 3, Themes Switching
 * Unit Test
 * Hilt
 * GitHub Actions

@@ -13,7 +13,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import com.example.live.data.repository.LiveRepository
 import com.example.live.datastore.UserPreferences
 import com.example.live.home.navigation.HOME_ROUTE
 import com.example.live.navigation.LiveNavHost
@@ -21,14 +20,10 @@ import com.example.live.ui.LiveBottomBar
 import com.example.live.ui.rememberLiveAppState
 import com.example.live.ui.theme.LiveTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var repository: LiveRepository
 
     private val mainViewModel: MainViewModel by viewModels()
 

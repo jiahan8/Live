@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.live.data.repository.LiveRepository
+import com.example.live.data.repository.HomeContentPostsRepository
 import com.example.live.database.model.Post
 import com.example.live.search.DataLoadingUiState
 import com.example.live.ui.pullrefresh.PullToRefreshLayoutState
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: LiveRepository,
+    private val repository: HomeContentPostsRepository,
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
@@ -56,8 +56,8 @@ class HomeViewModel @Inject constructor(
             )
             try {
                 delay(2000)
-                repository.getPosts(page = currentPage)
-                val newPosts = repository.getPostsFeed().first()
+                repository.savePosts(page = currentPage)
+                val newPosts = repository.posts.first()
                 homeUiState.posts.clear()
                 homeUiState.posts.addAll(newPosts)
                 if (loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH) {

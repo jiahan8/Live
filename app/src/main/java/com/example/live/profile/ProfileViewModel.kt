@@ -2,7 +2,7 @@ package com.example.live.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.live.data.repository.LiveRepository
+import com.example.live.data.repository.ProfileUserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val repository: LiveRepository
+    private val repository: ProfileUserDataRepository
 ) : ViewModel() {
 
     val userPreferences = runBlocking { repository.userPreferencesFlow.first() }

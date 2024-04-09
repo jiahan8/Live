@@ -13,5 +13,4 @@ internal interface FlavoredNetworkModule {
 
     @Binds
     fun bindsLiveNetworkDataSource(liveRetrofitNetwork: LiveRetrofitNetwork): LiveNetworkDataSource
-
 }

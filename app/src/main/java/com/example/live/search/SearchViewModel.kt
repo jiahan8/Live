@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.live.data.repository.LiveRepository
+import com.example.live.data.repository.SearchContentPhotosRepository
 import com.example.live.database.model.Post
 import com.example.live.ui.pullrefresh.PullToRefreshLayoutState
 import com.example.live.ui.pullrefresh.RefreshIndicatorState
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: LiveRepository,
+    private val repository: SearchContentPhotosRepository,
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
@@ -59,7 +59,7 @@ class SearchViewModel @Inject constructor(
             )
             try {
                 delay(2000)
-                val newPhotos = repository.getPhotosFeed(page = currentPage)
+                val newPhotos = repository.getPhotos(page = currentPage)
                 if (searchUiState.photos.isNotEmpty()
                     && (loadingType == DataLoadingUiState.LoadingType.INITIAL_LOAD || loadingType == DataLoadingUiState.LoadingType.PULL_REFRESH)
                 )
