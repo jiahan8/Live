@@ -29,7 +29,7 @@ class SearchViewModel @Inject constructor(
         SearchUiState(
             pullToRefreshState = PullToRefreshLayoutState(
                 onTimeUpdated = { timeElapsed ->
-                    convertElapsedTimeIntoText(timeElapsed)
+                    DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
                 })
         )
     )
@@ -117,10 +117,6 @@ class SearchViewModel @Inject constructor(
                 searchUiState = searchUiState.copy(isLoading = false)
             }
         }
-    }
-
-    private fun convertElapsedTimeIntoText(timeElapsed: Long): String {
-        return DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
     }
 }
 

@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
         HomeUiState(
             pullToRefreshState = PullToRefreshLayoutState(
                 onTimeUpdated = { timeElapsed ->
-                    convertElapsedTimeIntoText(timeElapsed)
+                    DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
                 })
         )
     )
@@ -74,10 +74,6 @@ class HomeViewModel @Inject constructor(
                 homeUiState = homeUiState.copy(isLoading = false)
             }
         }
-    }
-
-    private fun convertElapsedTimeIntoText(timeElapsed: Long): String {
-        return DateUtils.getTimePassedInHourMinSec(resourceProvider, timeElapsed)
     }
 }
 

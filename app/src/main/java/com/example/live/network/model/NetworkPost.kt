@@ -34,7 +34,6 @@ fun NetworkPost.asEntity() = Post(
 
 fun List<NetworkPost>.asDatabaseModel(): Array<DatabasePost> = this.map {
     DatabasePost(
-        0,
         postId = it.id,
         title = it.description,
         imageUrl = it.urls.regular

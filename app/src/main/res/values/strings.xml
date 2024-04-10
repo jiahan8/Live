@@ -8,6 +8,7 @@
     <string name="dark_theme">Dark Theme</string>
     <string name="clear_cache">Clear Cache</string>
 
+    // Deep linking
     <string name="host">jiahan8.github.io</string>
     <string name="scheme">live</string>
     <string name="search_path_prefix">/search</string>
@@ -21,5 +22,5 @@
     <string name="pull_to_refresh_complete_label">Up-to-date!</string>
     <string name="d_seconds_ago">%d seconds ago</string>
     <string name="d_minutes_ago">%d minutes ago</string>
-    <string name="d_hours_ago">%1$d hours ago</string>
+    <string name="d_hours_ago">%d hours ago</string>
 </resources>

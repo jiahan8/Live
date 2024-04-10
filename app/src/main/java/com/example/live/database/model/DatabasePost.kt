@@ -13,13 +13,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = "posts")
 data class DatabasePost(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "post_id") val postId: String?,
     @ColumnInfo(name = "title") val title: String?,
     @ColumnInfo(name = "image_url") val imageUrl: String?,
 ) : Parcelable
 
-fun List<DatabasePost>.asDomainModel(): List<Post> {
+fun List<DatabasePost>.asEntity(): List<Post> {
     return map {
         Post(
             id = it.postId,
