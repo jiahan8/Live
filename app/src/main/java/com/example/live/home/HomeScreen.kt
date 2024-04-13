@@ -38,8 +38,7 @@ internal fun HomeRoute(
     HomeScreen(
         homeViewModel.homeUiState,
         onPostClick,
-        { homeViewModel.loadPosts(DataLoadingUiState.LoadingType.LOAD_MORE) },
-        { homeViewModel.loadPosts(DataLoadingUiState.LoadingType.PULL_REFRESH) },
+        homeViewModel::loadPosts,
     )
 }
 
@@ -47,14 +46,12 @@ internal fun HomeRoute(
 fun HomeScreen(
     homeUiState: HomeUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: () -> Unit,
-    onPullRefresh: () -> Unit
+    onLoadPosts: (DataLoadingUiState.LoadingType) -> Unit,
 ) {
     Posts(
         homeUiState,
         onPostClick,
-        onLoadMore,
-        onPullRefresh,
+        onLoadPosts,
     )
 }
 
@@ -62,8 +59,7 @@ fun HomeScreen(
 fun Posts(
     homeUiState: HomeUiState,
     onPostClick: (Post) -> Unit,
-    onLoadMore: () -> Unit,
-    onPullRefresh: () -> Unit,
+    onLoadPosts: (DataLoadingUiState.LoadingType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val posts = rememberSaveable { homeUiState.posts }
@@ -79,13 +75,13 @@ fun Posts(
         }
     }
     if (shouldLoadMore && !homeUiState.isLoading) {
-        onLoadMore()
+        onLoadPosts(DataLoadingUiState.LoadingType.LOAD_MORE)
     }
 
     PullToRefreshLayout(
         pullRefreshLayoutState = pullToRefreshState,
         onRefresh = {
-            onPullRefresh()
+            onLoadPosts(DataLoadingUiState.LoadingType.PULL_REFRESH)
         },
     ) {
         Column {
